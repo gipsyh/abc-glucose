@@ -7,6 +7,7 @@ use bindings::{
 };
 use std::{ffi::c_void, ptr::NonNull, slice::from_raw_parts};
 
+#[derive(Debug)]
 pub struct Solver {
     ptr: NonNull<c_void>,
 }
