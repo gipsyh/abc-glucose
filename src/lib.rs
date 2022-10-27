@@ -24,7 +24,7 @@ impl Solver {
     }
 
     pub fn set_fanin(&mut self, var: Var, fanin0: Lit, fanin1: Lit) {
-        debug_assert!(fanin0.0 < fanin1.0);
+        assert!(fanin0.0 < fanin1.0);
         unsafe { bmcg2_sat_solver_set_var_fanin_lit(self.ptr.as_mut(), var.0, fanin0.0, fanin1.0) }
     }
 
@@ -48,7 +48,7 @@ impl Solver {
             let ret = unsafe { bmcg2_sat_solver_read_cex(self.ptr.as_ptr()) };
             Some(unsafe { from_raw_parts(ret.add(1) as *const Lit, *ret as usize) })
         } else {
-            debug_assert!(ret == -1);
+            assert!(ret == -1);
             None
         }
     }
