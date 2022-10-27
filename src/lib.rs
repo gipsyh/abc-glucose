@@ -1,14 +1,25 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+mod bindings;
+
+use bindings::bmcg2_sat_solver_start;
+use std::{ffi::c_void, ptr::NonNull};
+
+pub struct Solver {
+    ptr: NonNull<c_void>,
+}
+
+impl Solver {
+    pub fn new() -> Self {
+        let ptr = NonNull::new(unsafe { bmcg2_sat_solver_start() }).unwrap();
+        Self { ptr }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::Solver;
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        let solver = Solver::new();
     }
 }

@@ -1,6 +1,11 @@
 use std::{env, path::PathBuf, process::Command};
 
 fn main() {
+    println!("cargo:include=abc/src");
+    println!("cargo:rustc-link-search=native=abc");
+    println!("cargo:rustc-link-lib=static=abc");
+    println!("cargo:rustc-link-lib=dylib=stdc++");
+
     Command::new("make")
         .current_dir("./abc")
         .args(&["ABC_USE_NO_READLINE=1", "libabc.a", "-j"])
