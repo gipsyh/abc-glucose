@@ -4,6 +4,6 @@
     non_upper_case_globals,
     unused,
     improper_ctypes,
-    clippy::all,
+    clippy::all
 )]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

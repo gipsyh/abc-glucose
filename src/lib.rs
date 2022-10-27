@@ -68,6 +68,12 @@ impl Drop for Solver {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Var(i32);
 
+impl From<i32> for Var {
+    fn from(value: i32) -> Self {
+        Self(value)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Lit(i32);
 
