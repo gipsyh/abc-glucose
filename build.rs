@@ -8,7 +8,7 @@ fn main() {
 
     Command::new("make")
         .current_dir("./abc")
-        .args(&["ABC_USE_NO_READLINE=1", "libabc.a", "-j"])
+        .args(["ABC_USE_NO_READLINE=1", "libabc.a", "-j"])
         .status()
         .expect("Failed to build abc using make");
 
