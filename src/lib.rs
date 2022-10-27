@@ -88,6 +88,14 @@ impl Lit {
     pub fn new(var: Var, compl: bool) -> Self {
         Lit(var.0 + var.0 + compl as i32)
     }
+
+    pub fn var(&self) -> Var {
+        Var(self.0 >> 1)
+    }
+
+    pub fn compl(&self) -> bool {
+        self.0 & 1 > 0
+    }
 }
 
 #[cfg(test)]
@@ -103,7 +111,7 @@ mod tests {
         solver.set_fanin(var2, var0.into(), var1.into());
         solver.new_round();
         solver.mark_cone(var2);
-        let ret = solver.solve_under_assumptions(&[var2.into()]).unwrap();
+        let ret = solver.solve(&[var2.into()]).unwrap();
         assert_eq!(ret[0], Lit(0));
         assert_eq!(ret[1], Lit(2));
     }
