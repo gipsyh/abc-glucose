@@ -35,7 +35,7 @@ impl Solver {
         unsafe { bmcg2_sat_solver_mark_cone(self.ptr.as_mut(), var.0) }
     }
 
-    pub fn solve_under_assumptions(&mut self, assumptions: &[Lit]) -> Option<&[Lit]> {
+    pub fn solve(&mut self, assumptions: &[Lit]) -> Option<&[Lit]> {
         let ret = unsafe {
             bmcg2_sat_solver_solve(
                 self.ptr.as_ptr(),
