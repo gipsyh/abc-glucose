@@ -75,6 +75,12 @@ impl From<i32> for Var {
     }
 }
 
+impl From<Var> for i32 {
+    fn from(value: Var) -> Self {
+        value.0
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Lit(i32);
 
