@@ -1,10 +1,23 @@
-use std::{env, path::PathBuf, process::Command};
+use std::{
+    env,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 fn main() {
     println!("cargo:include=abc/src");
     println!("cargo:rustc-link-search=native=abc");
     println!("cargo:rustc-link-lib=static=abc");
     println!("cargo:rustc-link-lib=dylib=stdc++");
+
+    if Path::new(".git").is_dir() {
+        Command::new("git")
+            .args(["submodule", "update", "--init"])
+            .status()
+            .expect("Failed to update submodules.");
+    } else {
+        assert!(Path::new("abc").is_dir(), "abc source not included");
+    }
 
     Command::new("make")
         .current_dir("./abc")
