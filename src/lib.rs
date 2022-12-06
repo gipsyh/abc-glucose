@@ -1,11 +1,12 @@
 mod bindings;
 
 use bindings::{
-    bmcg2_sat_solver_addvar, bmcg2_sat_solver_mark_cone, bmcg2_sat_solver_read_cex,
-    bmcg2_sat_solver_set_jftr, bmcg2_sat_solver_set_var_fanin_lit, bmcg2_sat_solver_solve,
-    bmcg2_sat_solver_start, bmcg2_sat_solver_start_new_round, bmcg2_sat_solver_stop,
+    bmcg2_sat_solver_addclause, bmcg2_sat_solver_addvar, bmcg2_sat_solver_mark_cone,
+    bmcg2_sat_solver_read_cex, bmcg2_sat_solver_set_jftr, bmcg2_sat_solver_set_var_fanin_lit,
+    bmcg2_sat_solver_solve, bmcg2_sat_solver_start, bmcg2_sat_solver_start_new_round,
+    bmcg2_sat_solver_stop,
 };
-use std::{ffi::c_void, ptr::NonNull, slice::from_raw_parts};
+use std::{ffi::c_void, ops::Not, ptr::NonNull, slice::from_raw_parts};
 
 #[derive(Debug)]
 pub struct Solver {
@@ -34,6 +35,16 @@ impl Solver {
 
     pub fn mark_cone(&mut self, var: Var) {
         unsafe { bmcg2_sat_solver_mark_cone(self.ptr.as_mut(), var.0) }
+    }
+
+    pub fn add_clause(&mut self, clause: &[Lit]) {
+        unsafe {
+            bmcg2_sat_solver_addclause(
+                self.ptr.as_mut(),
+                clause.as_ptr() as *mut _,
+                clause.len() as _,
+            )
+        };
     }
 
     pub fn solve(&mut self, assumptions: &[Lit]) -> Option<&[Lit]> {
@@ -104,6 +115,15 @@ impl Lit {
     }
 }
 
+impl Not for Lit {
+    type Output = Self;
+
+    fn not(mut self) -> Self::Output {
+        self.0 ^= 1;
+        self
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{Lit, Solver};
@@ -114,9 +134,15 @@ mod tests {
         let var0 = solver.add_var();
         let var1 = solver.add_var();
         let var2 = solver.add_var();
+        let lit0: Lit = var0.into();
+        let lit1: Lit = var1.into();
         solver.set_fanin(var2, var0.into(), var1.into());
         solver.new_round();
         solver.mark_cone(var2);
+        solver.add_clause(&[!lit0, lit1]);
+        let ret = solver.solve(&[var2.into()]).unwrap();
+        dbg!(ret);
+        solver.add_clause(&[!lit0, !lit1]);
         let ret = solver.solve(&[var2.into()]).unwrap();
         assert_eq!(ret[0], Lit(0));
         assert_eq!(ret[1], Lit(2));
